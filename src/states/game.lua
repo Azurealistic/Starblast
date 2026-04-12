@@ -6,6 +6,7 @@ local ecs = require "libs.evolved"
 local camera = require "libs.camera"
 
 -- ECS:
+-- Utility fragments:
 local deltatime = require "fragments.deltatime"
 
 -- Game State:
