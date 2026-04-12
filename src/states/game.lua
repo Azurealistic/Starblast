@@ -5,6 +5,9 @@
 local ecs = require "libs.evolved"
 local camera = require "libs.camera"
 
+-- ECS:
+local deltatime = require "fragments.deltatime"
+
 -- Game State:
 local game = {}
 
@@ -38,6 +41,9 @@ function game:enter()
 end
 
 function game:update(dt)
+    -- We need a way to keep track of how much time has elapsed in the game, so we use deltatime!
+    ecs.set(deltatime, deltatime, dt)
+
     -- Update the parallax for the background.
     local screen_h = 256 * SCALE_FACTOR
     for _, layer in ipairs(parallax) do
