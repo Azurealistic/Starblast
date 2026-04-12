@@ -11,12 +11,12 @@ local game = {}
 -- Other variables used:
 local bg_sheet
 local bg_quads = {}
-local speed_multipler = 1 -- This multiplier will affect everything in how fast paced the game is, allowing for it to get harder as it goes on!
+local speed_multipler = 2 -- This multiplier will affect everything in how fast paced the game is, allowing for it to get harder as it goes on!
 
 -- Parallax layers: #5 (slow, distant stars) and #6 (faster, closer stars)
 local parallax = {
-    { quad_idx = 5, y = 0, speed = 32 * speed_multipler },
-    { quad_idx = 6, y = 0, speed = 64 * speed_multipler },
+    { quad_idx = 5, y = 0, speed = 128 * speed_multipler },
+    { quad_idx = 6, y = 0, speed = 256 * speed_multipler },
 }
 
 -- FSM Hooked functionality which auto runs during loop!
