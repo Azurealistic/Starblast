@@ -4,8 +4,9 @@ local ecs = require("libs.evolved")
 local stages = require("groups.stages")
 
 -- Fragments related to drawing:
-local position = require("fragments.position")
-local sprite = require("fragments.sprite")
+local position     = require("fragments.position")
+local sprite       = require("fragments.sprite")
+local controllable = require("fragments.controllable")
 
 -- Art related imports:
 local ships = require "sprites.ships"
@@ -13,8 +14,7 @@ local ships = require "sprites.ships"
 return ecs.builder()
     :name("system.ships.draw")
     :group(stages.DRAW)
-    :include(position.x, position.y)
-    :include(sprite.base)
+    :include(position.x, position.y, sprite.base, controllable)
     :execute(function(chunk, entity_list, entity_count)
         local px, py, image, direction = chunk:components(position.x, position.y, sprite.base, sprite.direction)
 

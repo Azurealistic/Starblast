@@ -22,6 +22,7 @@ local stages = require "groups.stages"
 require "systems.draw.projectile"
 require "systems.draw.boost"
 require "systems.draw.ships"
+require "systems.draw.enemy"
 require "systems.draw.ui"
 
 require "systems.update.input"
@@ -29,6 +30,8 @@ require "systems.update.shooting"
 require "systems.update.physics"
 require "systems.update.clamp"
 require "systems.update.projectile"
+require "systems.update.spawn"
+require "systems.update.collision"
 
 -- Entities:
 local player = require "entities.player"
@@ -90,7 +93,7 @@ function game:update(dt)
     ecs.process(stages.UPDATE)
 
     -- If we need to make the gameplay faster based off the score, we can do so automatically here!
-    speed_multipler = ((ecs.get(self.player, score) / 1000) + 2)
+    speed_multipler = ((ecs.get(self.player, score) / 50000) + 2)
     -- Set the speed we are allowed to move with!
     ecs.set(self.player, speed, speed_multipler * move_multipler)
 
@@ -107,6 +110,8 @@ function game:update(dt)
     if not self.source:isPlaying() then
         love.audio.play(self.source)
     end
+
+    print(ecs.get(self.player, score))
 end
 
 function game:draw()
