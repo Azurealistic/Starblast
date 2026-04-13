@@ -23,7 +23,8 @@ local player = ecs.builder()
     :set(health.max, 3)
     :set(shield.current, 3)
     :set(shield.max, 3)
-    :set(sprite)
+    :set(sprite.base)
+    :set(sprite.direction, 0)
     :set(size)
 
 return player
