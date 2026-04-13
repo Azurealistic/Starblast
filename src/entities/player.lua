@@ -8,6 +8,7 @@ local controllable = require "fragments.controllable"
 local speed = require "fragments.speed"
 local shield = require "fragments.shield"
 local sprite = require "fragments.sprite"
+local size = require "fragments.size"
 
 local player = ecs.builder()
     :name("entities.player")
@@ -23,5 +24,6 @@ local player = ecs.builder()
     :set(shield.current, 3)
     :set(shield.max, 3)
     :set(sprite)
+    :set(size)
 
 return player
