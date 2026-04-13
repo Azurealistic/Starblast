@@ -22,6 +22,7 @@ local stages = require "groups.stages"
 require "systems.draw.projectile"
 require "systems.draw.boost"
 require "systems.draw.ships"
+require "systems.draw.ui"
 
 require "systems.update.input"
 require "systems.update.shooting"
