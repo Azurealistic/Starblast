@@ -11,6 +11,7 @@ local sprite = require "fragments.sprite"
 local score = require "fragments.score"
 local projectile = require "fragments.projectile"
 local boost = require "fragments.boost"
+local energy = require "fragments.energy"
 
 local player = ecs.builder()
     :name("entities.player")
@@ -30,5 +31,7 @@ local player = ecs.builder()
     :set(score)
     :set(projectile.id, projectile.BASIC)
     :set(boost)
+    :set(energy.current, 100)
+    :set(energy.max, 100)
 
 return player
