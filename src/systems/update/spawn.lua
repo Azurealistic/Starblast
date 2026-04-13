@@ -9,6 +9,7 @@ local sprite       = require "fragments.sprite"
 local score        = require "fragments.score"
 local controllable = require "fragments.controllable"
 
+local cooldown  = require "fragments.cooldown"
 local enemy_ent = require "entities.enemy"
 
 local SPAWN_INTERVAL_BASE = 5.0   -- seconds between spawns at score 0
@@ -62,4 +63,6 @@ return ecs.builder()
         ecs.set(e, speed,            enemy_speed)
         ecs.set(e, sprite.base,      ENEMY_SPRITES[math.random(#ENEMY_SPRITES)])
         ecs.set(e, sprite.direction, 0)
+        -- Random initial cooldown so enemies don't all fire at the same time.
+        ecs.set(e, cooldown, math.random() * 2.0)
     end):spawn()

@@ -5,10 +5,11 @@ local position     = require "fragments.position"
 local health       = require "fragments.health"
 local shield       = require "fragments.shield"
 local damage       = require "fragments.damage"
-local interactable = require "fragments.interactable"
-local interactor   = require "fragments.interactor"
-local projectile   = require "fragments.projectile"
-local score        = require "fragments.score"
+local interactable   = require "fragments.interactable"
+local interactor     = require "fragments.interactor"
+local projectile     = require "fragments.projectile"
+local score          = require "fragments.score"
+local enemy_bullet   = require "fragments.enemy_bullet"
 
 -- AABB test: both sprites are treated as (8 * SCALE_FACTOR) squares.
 local function aabb(ax, ay, bx, by)
@@ -19,8 +20,10 @@ end
 
 -- Standalone queries used inside prologue to collect live bullets / player data
 -- before the per-chunk execute callbacks run.
+-- Enemy bullets are excluded so they never accidentally damage enemies.
 local bullet_query = ecs.builder()
     :include(projectile.id, position.x, position.y, damage)
+    :exclude(enemy_bullet)
     :spawn()
 
 local player_query = ecs.builder()
