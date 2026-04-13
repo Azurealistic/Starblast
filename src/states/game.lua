@@ -4,6 +4,7 @@
 -- Imports:
 local ecs = require "libs.evolved"
 local ships = require "sprites.ships"
+local projectiles = require "sprites.projectiles"
 
 -- ECS:
 -- Utility fragments:
@@ -15,10 +16,14 @@ local score = require "fragments.score"
 -- System related:
 local stages = require "groups.stages"
 
-require "systems.draw"
-require "systems.input"
-require "systems.physics"
-require "systems.clamp"
+require "systems.draw.projectile"
+require "systems.draw.ships"
+
+require "systems.update.input"
+require "systems.update.shooting"
+require "systems.update.physics"
+require "systems.update.clamp"
+require "systems.update.projectile"
 
 -- Entities:
 local player = require "entities.player"
@@ -45,6 +50,7 @@ local parallax = {
 function game:enter()
     -- Load the ships!
     ships.load()
+    projectiles.load()
 
     --  Load background stuff!
     bg_sheet = love.graphics.newImage("assets/sprites/backgrounds.png")
