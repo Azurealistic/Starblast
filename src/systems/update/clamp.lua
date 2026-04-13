@@ -7,7 +7,7 @@ local controllable = require("fragments.controllable")
 local SHIP_SIZE = 8 -- sprite cell size in game pixels
 
 return ecs.builder()
-    :name("system.clamp")
+    :name("system.clamp.update")
     :group(stages.UPDATE)
     :include(position.x, position.y, controllable)
     :execute(function(chunk, entity_list, entity_count)

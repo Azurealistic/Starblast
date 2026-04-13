@@ -7,7 +7,7 @@ local controllable = require("fragments.controllable")
 local sprite = require("fragments.sprite")
 
 return ecs.builder()
-    :name("system.input")
+    :name("system.input.update")
     :group(stages.UPDATE)
     :include(velocity.x, velocity.y, speed, controllable)
     :include(sprite.direction)

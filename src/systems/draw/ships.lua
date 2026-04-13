@@ -12,7 +12,7 @@ local size = require("fragments.size")
 local ships = require "sprites.ships"
 
 return ecs.builder()
-    :name("system.draw")
+    :name("system.ships.draw")
     :group(stages.DRAW)
     :include(position.x, position.y)
     :include(sprite.base)

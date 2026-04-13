@@ -6,7 +6,7 @@ local velocity = require("fragments.velocity")
 local deltatime = require("fragments.deltatime")
 
 return ecs.builder()
-    :name("system.physics")
+    :name("system.physics.update")
     :group(stages.UPDATE)
     :include(position.x, position.y, velocity.x, velocity.y)
     :execute(function(chunk, entity_list, entity_count)
