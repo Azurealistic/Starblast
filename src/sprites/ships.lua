@@ -11,7 +11,7 @@ local ships = {
 }
 
 function ships.load()
-    ships.sheet = love.graphics.newImage("assets/ships.png")
+    ships.sheet = love.graphics.newImage("assets/sprites/ships.png")
     ships.sheet:setFilter("nearest", "nearest")
 
     local sw, sh = ships.sheet:getDimensions()
