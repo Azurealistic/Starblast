@@ -65,6 +65,9 @@ function game:enter()
     ecs.set(self.player, sprite.direction, 0) -- For indicating left or right movement!
     -- Set the initial speed we are allowed to move with!
     ecs.set(self.player, speed, speed_multipler * move_multipler)
+
+    -- Load music!
+    self.source = love.audio.newSource("assets/music/7.wav", "stream")
 end
 
 function game:update(dt)
@@ -81,6 +84,11 @@ function game:update(dt)
         if layer.y >= screen_h then
             layer.y = layer.y - screen_h
         end
+    end
+
+    -- If music is not playing, play it!
+    if not self.source:isPlaying() then
+        love.audio.play(self.source)
     end
 end
 
