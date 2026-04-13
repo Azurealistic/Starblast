@@ -15,7 +15,7 @@ return ecs.builder()
 
         local min_x = 0
         local max_x = (GAME_WIDTH - SHIP_SIZE) * SCALE_FACTOR
-        local min_y = 0
+        local min_y = (GAME_HEIGHT / 2) -- Don't want to clash with the UI!
         local max_y = (GAME_HEIGHT - SHIP_SIZE * 2) * SCALE_FACTOR
 
         for i = 1, entity_count do
