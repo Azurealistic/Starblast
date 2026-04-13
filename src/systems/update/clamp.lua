@@ -16,7 +16,7 @@ return ecs.builder()
         local min_x = 0
         local max_x = (GAME_WIDTH - SHIP_SIZE) * SCALE_FACTOR
         local min_y = 0
-        local max_y = (GAME_HEIGHT - SHIP_SIZE) * SCALE_FACTOR
+        local max_y = (GAME_HEIGHT - SHIP_SIZE * 2) * SCALE_FACTOR
 
         for i = 1, entity_count do
             if px[i] < min_x then px[i] = min_x end

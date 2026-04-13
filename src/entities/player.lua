@@ -8,9 +8,9 @@ local controllable = require "fragments.controllable"
 local speed = require "fragments.speed"
 local shield = require "fragments.shield"
 local sprite = require "fragments.sprite"
-local size = require "fragments.size"
 local score = require "fragments.score"
 local projectile = require "fragments.projectile"
+local boost = require "fragments.boost"
 
 local player = ecs.builder()
     :name("entities.player")
@@ -23,12 +23,12 @@ local player = ecs.builder()
     :set(speed)
     :set(health.current, 3)
     :set(health.max, 3)
-    :set(shield.current, 3)
+    :set(shield.current, 0)
     :set(shield.max, 3)
     :set(sprite.base)
     :set(sprite.direction)
-    :set(size)
     :set(score)
     :set(projectile.id, projectile.BASIC)
+    :set(boost)
 
 return player

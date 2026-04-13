@@ -3,8 +3,11 @@
 
 -- Imports:
 local ecs = require "libs.evolved"
+
+-- Sprites:
 local ships = require "sprites.ships"
 local projectiles = require "sprites.projectiles"
+local misc = require "sprites.misc"
 
 -- ECS:
 -- Utility fragments:
@@ -12,12 +15,12 @@ local deltatime = require "fragments.deltatime"
 local sprite = require "fragments.sprite"
 local speed = require "fragments.speed"
 local score = require "fragments.score"
-local projectile = require "fragments.projectile"
 
 -- System related:
 local stages = require "groups.stages"
 
 require "systems.draw.projectile"
+require "systems.draw.boost"
 require "systems.draw.ships"
 
 require "systems.update.input"
@@ -49,9 +52,10 @@ local parallax = {
 
 -- FSM Hooked functionality which auto runs during loop!
 function game:enter()
-    -- Load the ships!
+    -- Load the sprites!
     ships.load()
     projectiles.load()
+    misc.load()
 
     --  Load background stuff!
     bg_sheet = love.graphics.newImage("assets/sprites/backgrounds.png")

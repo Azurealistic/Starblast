@@ -9,9 +9,6 @@ local projectiles = {
     quads = {},
 }
 
--- Projectile type → quad index (adjust these to match the sprite sheet layout)
-projectiles.BASIC = 1
-
 function projectiles.load()
     projectiles.sheet = love.graphics.newImage("assets/sprites/projectiles.png")
     projectiles.sheet:setFilter("nearest", "nearest")
