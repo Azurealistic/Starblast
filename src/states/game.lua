@@ -12,6 +12,7 @@ local deltatime = require "fragments.deltatime"
 local sprite = require "fragments.sprite"
 local speed = require "fragments.speed"
 local score = require "fragments.score"
+local projectile = require "fragments.projectile"
 
 -- System related:
 local stages = require "groups.stages"

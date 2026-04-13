@@ -11,9 +11,9 @@ local MARGIN = 16
 return ecs.builder()
     :name("system.projectile.update")
     :group(stages.UPDATE)
-    :include(projectile, position.x, position.y)
+    :include(projectile.id, position.x, position.y)
     :execute(function(chunk, entity_list, entity_count)
-        local px, py, ptype = chunk:components(position.x, position.y, projectile)
+        local px, py, ptype = chunk:components(position.x, position.y, projectile.id)
 
         local screen_w = GAME_WIDTH  * SCALE_FACTOR
         local screen_h = GAME_HEIGHT * SCALE_FACTOR
