@@ -10,7 +10,7 @@ local energy = require("fragments.energy")
 local deltatime = require("fragments.deltatime")
 
 local DRAIN_RATE = 30  -- energy per second while boosting
-local REGEN_RATE = 15  -- energy per second while not boosting
+local REGEN_RATE = 5  -- energy per second while not boosting
 
 return ecs.builder()
     :name("system.input.update")
@@ -48,7 +48,14 @@ return ecs.builder()
         for i = 1, entity_count do
             direction[i] = facing
 
-            local is_boosting = wants_boost and energy[i] > 30 -- Can't boost unless energy is at least up there!
+            -- Hysteresis: once boosting, run until empty (> 0).
+            -- To start a fresh boost, need > 30 so regen can't immediately retrigger.
+            local is_boosting
+            if boosting[i] then
+                is_boosting = wants_boost and energy[i] > 0
+            else
+                is_boosting = wants_boost and energy[i] > 30
+            end
             boosting[i] = is_boosting
 
             if is_boosting then
