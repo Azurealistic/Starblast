@@ -32,6 +32,8 @@ require "systems.update.clamp"
 require "systems.update.projectile"
 require "systems.update.spawn"
 require "systems.update.collision"
+require "systems.update.enemy_shoot"
+require "systems.update.enemy_bullet_collision"
 
 -- Entities:
 local player = require "entities.player"
@@ -110,8 +112,6 @@ function game:update(dt)
     if not self.source:isPlaying() then
         love.audio.play(self.source)
     end
-
-    print(ecs.get(self.player, score))
 end
 
 function game:draw()

@@ -8,6 +8,7 @@ local damage       = require "fragments.damage"
 local sprite       = require "fragments.sprite"
 local interactable = require "fragments.interactable"
 local enemy_frag   = require "fragments.enemy"
+local cooldown     = require "fragments.cooldown"
 
 local enemy = ecs.builder()
     :name("entities.enemy")
@@ -23,5 +24,6 @@ local enemy = ecs.builder()
     :set(damage, 1)
     :set(sprite.base, 4)
     :set(sprite.direction, 0)
+    :set(cooldown, 0)
 
 return enemy
