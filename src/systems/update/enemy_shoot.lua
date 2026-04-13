@@ -12,8 +12,8 @@ local cooldown        = require "fragments.cooldown"
 
 local enemy_bullet_ent = require "entities.enemy_bullet"
 
-local SHOOT_COOLDOWN  = 2.0    -- seconds between shots per enemy
-local BULLET_SPEED    = 400    -- pixels/sec downward
+local SHOOT_COOLDOWN  = 0.5    -- seconds between shots per enemy
+local BULLET_SPEED    = 500    -- pixels/sec downward
 local BULLET_DAMAGE   = 1
 
 -- Horizontal centering offset: enemy sprite is 8 game-px wide, bullet is also

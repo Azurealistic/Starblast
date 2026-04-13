@@ -41,9 +41,7 @@ return ecs.builder()
     :name("system.collision.update")
     :group(stages.UPDATE)
     :include(interactable, position.x, position.y, health.current, damage)
-    -- ------------------------------------------------------------------ --
-    -- PROLOGUE: snapshot all bullets and the player before chunk iteration.
-    -- ------------------------------------------------------------------ --
+
     :prologue(function()
         frame_bullets = {}
         frame_players = {}
@@ -82,9 +80,7 @@ return ecs.builder()
             end
         end
     end)
-    -- ------------------------------------------------------------------ --
-    -- EXECUTE: per-chunk collision checks (enemies are the matched entities).
-    -- ------------------------------------------------------------------ --
+
     :execute(function(chunk, entity_list, entity_count)
         local ex, ey, eh, edamage = chunk:components(
             position.x, position.y, health.current, damage)
@@ -147,9 +143,7 @@ return ecs.builder()
             ::continue::
         end
     end)
-    -- ------------------------------------------------------------------ --
-    -- EPILOGUE: write player state back and destroy dead entities.
-    -- ------------------------------------------------------------------ --
+
     :epilogue(function()
         for _, p in ipairs(frame_players) do
             if p.changed then
