@@ -44,7 +44,7 @@ function game:enter()
     ships.load()
 
     --  Load background stuff!
-    bg_sheet = love.graphics.newImage("assets/backgrounds.png")
+    bg_sheet = love.graphics.newImage("assets/sprites/backgrounds.png")
     bg_sheet:setFilter("nearest", "nearest")
 
     local cw, ch = 128, 256  -- cell width/height
