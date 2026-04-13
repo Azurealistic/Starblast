@@ -93,7 +93,7 @@ function game:update(dt)
     ecs.process(stages.UPDATE)
 
     -- If we need to make the gameplay faster based off the score, we can do so automatically here!
-    speed_multipler = ((ecs.get(self.player, score) / 50000) + 2)
+    speed_multipler = ((ecs.get(self.player, score) / 10000) + 2)
     -- Set the speed we are allowed to move with!
     ecs.set(self.player, speed, speed_multipler * move_multipler)
 
