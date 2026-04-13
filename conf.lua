@@ -1,10 +1,12 @@
 -- Default settings for game.
+GAME_WIDTH = 128
+GAME_HEIGHT = 256
 SCALE_FACTOR = 5
 
 function love.conf(t)
     t.window.title = "Myrrh"
-    t.window.width = 128 * SCALE_FACTOR
-    t.window.height = 256 * SCALE_FACTOR
+    t.window.width = GAME_WIDTH * SCALE_FACTOR
+    t.window.height = GAME_HEIGHT * SCALE_FACTOR
     t.window.resizable = false
     t.window.vsync = false
     t.window.msaa = 0

@@ -40,8 +40,6 @@ local parallax = {
 
 -- FSM Hooked functionality which auto runs during loop!
 function game:enter()
-    print("Entering game state!")
-
     -- Load the ships!
     ships.load()
 
@@ -61,8 +59,7 @@ function game:enter()
     end
 
     -- Player initial setup!
-    self.player = player:spawn() 
-
+    self.player = player:spawn()
     -- Choose one of the random ships to pick from
     -- Set the initial ship we use!
     ecs.set(self.player, sprite.base, player_ship_ids[1])
@@ -108,7 +105,6 @@ function game:draw()
 end
 
 function game:leave()
-    print("Leaving game state!")
 end
 
 return game
