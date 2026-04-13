@@ -15,18 +15,16 @@ return ecs.builder()
     :name("system.draw")
     :group(stages.DRAW)
     :include(position.x, position.y)
-    :include(sprite)
+    :include(sprite.base)
     :include(size)
     :execute(function(chunk, entity_list, entity_count)
-        local px, py = chunk:components(position.x, position.y)
-        local sprites = chunk:components(sprite)
-        local size = chunk:components(size)
+        local px, py, image, direction, size = chunk:components(position.x, position.y, sprite.base, sprite.direction, size)
 
         for i = 1, entity_count do
-            if size == 0 then
-                love.graphics.draw(ships.sheet, ships.small[sprites[i]], px[i], py[i], 0, SCALE_FACTOR, SCALE_FACTOR)
-            elseif size == 1 then
-                love.graphics.draw(ships.sheet, ships.large[sprites[i]], px[i], py[i], 0, SCALE_FACTOR, SCALE_FACTOR)
+            if size[i] == 0 then
+                love.graphics.draw(ships.sheet, ships.small[image[i] + direction[i]], px[i], py[i], 0, SCALE_FACTOR, SCALE_FACTOR)
+            elseif size[i] == 1 then
+                love.graphics.draw(ships.sheet, ships.large[image[i] + direction[i]], px[i], py[i], 0, SCALE_FACTOR, SCALE_FACTOR)
             end
         end
     end):spawn()

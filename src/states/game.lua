@@ -21,7 +21,7 @@ require "systems.physics"
 
 -- Entities:
 local player = require "entities.player"
-local player_ship_ids = {1, 11, 21, 31, 41}
+local player_ship_ids = {2, 12, 22, 32, 42}
 
 -- Game State:
 local game = {}
@@ -30,7 +30,7 @@ local game = {}
 local bg_sheet
 local bg_quads = {}
 local speed_multipler = 2 -- This multiplier will affect everything in how fast paced the game is, allowing for it to get harder as it goes on!
-local move_multipler = 0 -- This one is used alongside the speed multiplier to allow us to move our ship at a relatively good pace.
+local move_multipler = 200 -- This one is used alongside the speed multiplier to allow us to move our ship at a relatively good pace.
 
 -- Parallax layers: #5 (slow, distant stars) and #6 (faster, closer stars)
 local parallax = {
@@ -65,9 +65,10 @@ function game:enter()
 
     -- Choose one of the random ships to pick from
     -- Set the initial ship we use!
-    ecs.set(self.player, sprite, player_ship_ids[1])
+    ecs.set(self.player, sprite.base, player_ship_ids[1])
+    ecs.set(self.player, sprite.direction, 0) -- For indicating left or right movement!
     -- Set the initial speed we are allowed to move with!
-    ecs.set(self.player, speed, speed_multipler)
+    ecs.set(self.player, speed, speed_multipler * move_multipler)
 end
 
 function game:update(dt)

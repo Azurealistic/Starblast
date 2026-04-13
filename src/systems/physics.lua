@@ -19,6 +19,6 @@ return ecs.builder()
         for i = 1, entity_count do
             px[i] = px[i] + vx[i] * dt
             py[i] = py[i] + vy[i] * dt
-            print("Entity " .. entity_list[i] .. " moved to position: (" .. px[i] .. ", " .. py[i] .. ")")
+            -- print("Entity " .. entity_list[i] .. " moved to position: (" .. px[i] .. ", " .. py[i] .. ")")
         end
     end):spawn()
