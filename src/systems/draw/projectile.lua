@@ -8,9 +8,9 @@ local projectiles     = require "sprites.projectiles"
 return ecs.builder()
     :name("system.projectile.draw")
     :group(stages.DRAW)
-    :include(projectile, position.x, position.y)
+    :include(projectile.id, position.x, position.y)
     :execute(function(chunk, entity_list, entity_count)
-        local px, py, ptype = chunk:components(position.x, position.y, projectile)
+        local px, py, ptype = chunk:components(position.x, position.y, projectile.id)
 
         for i = 1, entity_count do
             local quad = projectiles.quads[ptype[i]]

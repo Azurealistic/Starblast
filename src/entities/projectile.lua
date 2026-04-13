@@ -4,7 +4,7 @@ local position       = require "fragments.position"
 local velocity       = require "fragments.velocity"
 local speed          = require "fragments.speed"
 local damage         = require "fragments.damage"
-local projectile    = require "fragments.projectile"
+local projectile_frag = require "fragments.projectile"
 
 -- Projectile template: actual position/velocity are set at spawn time by
 -- the shooting system. speed is stored so type-specific logic can read it.
@@ -16,6 +16,6 @@ local projectile = ecs.builder()
     :set(velocity.y)
     :set(speed)
     :set(damage)
-    :set(projectile)
+    :set(projectile_frag.id)
 
 return projectile
