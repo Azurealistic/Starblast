@@ -9,6 +9,7 @@ local speed = require "fragments.speed"
 local shield = require "fragments.shield"
 local sprite = require "fragments.sprite"
 local size = require "fragments.size"
+local score = require "fragments.score"
 
 local player = ecs.builder()
     :name("entities.player")
@@ -26,5 +27,6 @@ local player = ecs.builder()
     :set(sprite.base)
     :set(sprite.direction)
     :set(size)
+    :set(score)
 
 return player

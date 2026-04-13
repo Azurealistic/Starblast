@@ -10,6 +10,7 @@ local ships = require "sprites.ships"
 local deltatime = require "fragments.deltatime"
 local sprite = require "fragments.sprite"
 local speed = require "fragments.speed"
+local score = require "fragments.score"
 
 -- System related:
 local stages = require "groups.stages"
@@ -17,6 +18,7 @@ local stages = require "groups.stages"
 require "systems.draw"
 require "systems.input"
 require "systems.physics"
+require "systems.clamp"
 
 -- Entities:
 local player = require "entities.player"
@@ -28,14 +30,15 @@ local game = {}
 -- Other variables used:
 local bg_sheet
 local bg_quads = {}
-local speed_multipler = 2 -- This multiplier will affect everything in how fast paced the game is, allowing for it to get harder as it goes on!
+local speed_multipler = 0 -- This multiplier will affect everything in how fast paced the game is, allowing for it to get harder as it goes on!
 local move_multipler = 200 -- This one is used alongside the speed multiplier to allow us to move our ship at a relatively good pace.
 
 -- Parallax layers: #5 (slow, distant stars) and #6 (faster, closer stars)
+-- Base speeds are multiplied by speed_multipler each update, so don't pre-multiply here.
 local parallax = {
-    { quad_idx = 3, y = 0, speed = 64 * speed_multipler },
-    { quad_idx = 5, y = 0, speed = 128 * speed_multipler },
-    { quad_idx = 6, y = 0, speed = 256 * speed_multipler },
+    { quad_idx = 3, y = 0, speed = 64 },
+    { quad_idx = 5, y = 0, speed = 128 },
+    { quad_idx = 6, y = 0, speed = 256 },
 }
 
 -- FSM Hooked functionality which auto runs during loop!
@@ -60,13 +63,9 @@ function game:enter()
 
     -- Player initial setup!
     self.player = player:spawn()
-    -- Choose one of the random ships to pick from
-    -- Set the initial ship we use!
+    -- Always starts on first ship then we can potentially upgrade it!
     ecs.set(self.player, sprite.base, player_ship_ids[1])
     ecs.set(self.player, sprite.direction, 0) -- For indicating left or right movement!
-    -- Set the initial speed we are allowed to move with!
-    ecs.set(self.player, speed, speed_multipler * move_multipler)
-
     -- Load music!
     self.source = love.audio.newSource("assets/music/7.wav", "stream")
 end
@@ -78,10 +77,15 @@ function game:update(dt)
     -- Process all update systems!
     ecs.process(stages.UPDATE)
 
+    -- If we need to make the gameplay faster based off the score, we can do so automatically here!
+    speed_multipler = ((ecs.get(self.player, score) / 1000) + 2)
+    -- Set the speed we are allowed to move with!
+    ecs.set(self.player, speed, speed_multipler * move_multipler)
+
     -- Update the parallax for the background.
     local screen_h = 256 * SCALE_FACTOR
     for _, layer in ipairs(parallax) do
-        layer.y = layer.y + layer.speed * dt
+        layer.y = layer.y + layer.speed * dt * speed_multipler
         if layer.y >= screen_h then
             layer.y = layer.y - screen_h
         end
@@ -96,7 +100,6 @@ end
 function game:draw()
     -- Figure out draw height for game!
     local screen_h = 256 * SCALE_FACTOR
-
 
     -- Parallax star layers: draw twice (current + one copy above) for seamless looping
     -- Essentially the parallax layers are of height 256 * SCALE_FACTOR * 2, so it looks like they never end!

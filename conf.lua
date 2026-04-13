@@ -4,7 +4,7 @@ GAME_HEIGHT = 256
 SCALE_FACTOR = 5
 
 function love.conf(t)
-    t.window.title = "Myrrh"
+    t.window.title = "Starblast"
     t.window.width = GAME_WIDTH * SCALE_FACTOR
     t.window.height = GAME_HEIGHT * SCALE_FACTOR
     t.window.resizable = false
