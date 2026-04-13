@@ -33,6 +33,7 @@ local move_multipler = 200 -- This one is used alongside the speed multiplier to
 
 -- Parallax layers: #5 (slow, distant stars) and #6 (faster, closer stars)
 local parallax = {
+    { quad_idx = 3, y = 0, speed = 64 * speed_multipler },
     { quad_idx = 5, y = 0, speed = 128 * speed_multipler },
     { quad_idx = 6, y = 0, speed = 256 * speed_multipler },
 }
@@ -96,13 +97,12 @@ function game:draw()
     -- Figure out draw height for game!
     local screen_h = 256 * SCALE_FACTOR
 
-    -- Background #3 (top-right): base static layer
-    love.graphics.draw(bg_sheet, bg_quads[3], 0, 0, 0, SCALE_FACTOR, SCALE_FACTOR)
 
     -- Parallax star layers: draw twice (current + one copy above) for seamless looping
     -- Essentially the parallax layers are of height 256 * SCALE_FACTOR * 2, so it looks like they never end!
     for _, layer in ipairs(parallax) do
         local q = bg_quads[layer.quad_idx]
+        love.graphics.draw(bg_sheet, q, 0, layer.y,           0, SCALE_FACTOR, SCALE_FACTOR)
         love.graphics.draw(bg_sheet, q, 0, layer.y,           0, SCALE_FACTOR, SCALE_FACTOR)
         love.graphics.draw(bg_sheet, q, 0, layer.y - screen_h, 0, SCALE_FACTOR, SCALE_FACTOR)
     end
