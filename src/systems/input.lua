@@ -19,8 +19,8 @@ return ecs.builder()
         local dx, dy = 0, 0
         if love.keyboard.isDown("left") or love.keyboard.isDown("a") then dx = dx - 1 end
         if love.keyboard.isDown("right") or love.keyboard.isDown("d") then dx = dx + 1 end
-        -- if love.keyboard.isDown("up") or love.keyboard.isDown("w") then dy = dy - 1 end
-        -- if love.keyboard.isDown("down") or love.keyboard.isDown("s") then dy = dy + 1 end
+        if love.keyboard.isDown("up") or love.keyboard.isDown("w") then dy = dy - 1 end
+        if love.keyboard.isDown("down") or love.keyboard.isDown("s") then dy = dy + 1 end
 
         -- Save integer facing direction (-1, 0, 1) before normalization
         local facing = dx
