@@ -3,7 +3,6 @@
 
 -- Imports:
 local ecs = require "libs.evolved"
-local camera = require "libs.camera"
 local ships = require "sprites.ships"
 
 -- ECS:
