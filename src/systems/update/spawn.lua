@@ -18,7 +18,13 @@ local ENEMY_SPEED_MAX     = 300   -- pixels/sec downward when fully scaled
 
 -- Sprite base IDs for enemy ship variants (column 3 of sprite rows 0-2).
 -- Adjust if the sprite sheet layout differs.
-local ENEMY_SPRITES = { 5, 6, 7 }
+local ENEMY_SPRITES = {  5,  6,  7,  8,  9, 10, 
+                        15, 16, 17, 18, 19, 20, 
+                        25, 26, 27, 28, 29, 30, 
+                        35, 36, 37, 38, 39, 40,
+                        45, 46, 47, 48, 49, 50,
+                        55, 56, 57, 58, 59, 60,
+                    }
 
 local spawn_timer = 0
 
