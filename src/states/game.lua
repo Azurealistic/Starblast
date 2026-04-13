@@ -4,10 +4,24 @@
 -- Imports:
 local ecs = require "libs.evolved"
 local camera = require "libs.camera"
+local ships = require "sprites.ships"
 
 -- ECS:
 -- Utility fragments:
 local deltatime = require "fragments.deltatime"
+local sprite = require "fragments.sprite"
+local speed = require "fragments.speed"
+
+-- System related:
+local stages = require "groups.stages"
+
+require "systems.draw"
+require "systems.input"
+require "systems.physics"
+
+-- Entities:
+local player = require "entities.player"
+local player_ship_ids = {1, 11, 21, 31, 41}
 
 -- Game State:
 local game = {}
@@ -16,6 +30,7 @@ local game = {}
 local bg_sheet
 local bg_quads = {}
 local speed_multipler = 2 -- This multiplier will affect everything in how fast paced the game is, allowing for it to get harder as it goes on!
+local move_multipler = 0 -- This one is used alongside the speed multiplier to allow us to move our ship at a relatively good pace.
 
 -- Parallax layers: #5 (slow, distant stars) and #6 (faster, closer stars)
 local parallax = {
@@ -26,6 +41,11 @@ local parallax = {
 -- FSM Hooked functionality which auto runs during loop!
 function game:enter()
     print("Entering game state!")
+
+    -- Load the ships!
+    ships.load()
+
+    --  Load background stuff!
     bg_sheet = love.graphics.newImage("assets/backgrounds.png")
     bg_sheet:setFilter("nearest", "nearest")
 
@@ -39,11 +59,23 @@ function game:enter()
             bg_quads[idx] = love.graphics.newQuad(col * cw, row * ch, cw, ch, sw, sh)
         end
     end
+
+    -- Player initial setup!
+    self.player = player:spawn() 
+
+    -- Choose one of the random ships to pick from
+    -- Set the initial ship we use!
+    ecs.set(self.player, sprite, player_ship_ids[1])
+    -- Set the initial speed we are allowed to move with!
+    ecs.set(self.player, speed, speed_multipler)
 end
 
 function game:update(dt)
     -- We need a way to keep track of how much time has elapsed in the game, so we use deltatime!
     ecs.set(deltatime, deltatime, dt)
+
+    -- Process all update systems!
+    ecs.process(stages.UPDATE)
 
     -- Update the parallax for the background.
     local screen_h = 256 * SCALE_FACTOR
@@ -69,6 +101,9 @@ function game:draw()
         love.graphics.draw(bg_sheet, q, 0, layer.y,           0, SCALE_FACTOR, SCALE_FACTOR)
         love.graphics.draw(bg_sheet, q, 0, layer.y - screen_h, 0, SCALE_FACTOR, SCALE_FACTOR)
     end
+
+     -- Draw all entities required!
+    ecs.process(stages.DRAW)
 end
 
 function game:leave()
