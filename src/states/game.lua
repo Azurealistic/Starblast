@@ -34,6 +34,7 @@ require "systems.update.spawn"
 require "systems.update.collision"
 require "systems.update.enemy_shoot"
 require "systems.update.enemy_bullet_collision"
+require "systems.update.spawn_grace"
 
 -- Entities:
 local player = require "entities.player"

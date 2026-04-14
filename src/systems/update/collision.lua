@@ -10,6 +10,7 @@ local interactor     = require "fragments.interactor"
 local projectile     = require "fragments.projectile"
 local score          = require "fragments.score"
 local enemy_bullet   = require "fragments.enemy_bullet"
+local spawn_grace    = require "fragments.spawn_grace"
 
 -- AABB test: both sprites are treated as (8 * SCALE_FACTOR) squares.
 local function aabb(ax, ay, bx, by)
@@ -82,8 +83,8 @@ return ecs.builder()
     end)
 
     :execute(function(chunk, entity_list, entity_count)
-        local ex, ey, eh, edamage = chunk:components(
-            position.x, position.y, health.current, damage)
+        local ex, ey, eh, edamage, egrace = chunk:components(
+            position.x, position.y, health.current, damage, spawn_grace)
 
         local screen_h = GAME_HEIGHT * SCALE_FACTOR
         local margin   = 16 * SCALE_FACTOR
@@ -102,6 +103,7 @@ return ecs.builder()
             end
 
             -- ---- Bullet → enemy collision ---- --
+            if egrace[i] > 0 then goto continue end
             for _, b in ipairs(frame_bullets) do
                 if not b.used and aabb(ex[i], ey[i], b.x, b.y) then
                     eh[i]  = eh[i] - b.damage

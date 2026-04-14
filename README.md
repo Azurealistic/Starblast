@@ -9,4 +9,5 @@ This game uses a collection of existing code and libraries designed for Love2D t
 ## Assets:
 This game uses various assets from [itch.io](https://itch.io).
 - Art by [Gustavo Vituri](https://gvituri.itch.io/space-shooter).
-- Music by [GL0RY_T0_TH3_M3CH1N3](https://glorytothemachine.itch.io/d4t4-h3m0rrh4g3)
+- Music by [GL0RY_T0_TH3_M3CH1N3](https://glorytothemachine.itch.io/d4t4-h3m0rrh4g3).
+- Font by [SciGho](https://ninjikin.itch.io/a-font-for-the-future-that-never-existed-80s-retro-future-font).
