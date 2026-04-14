@@ -9,6 +9,6 @@ local id = ecs.builder()
 -- Add new entries here as projectile types are added.
 return {
     id    = id,
-    BASIC = 1,
+    BASIC = 15,
     DENSE = 4,
 }
