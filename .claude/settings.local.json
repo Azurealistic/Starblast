@@ -1,0 +1,11 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(powershell -Command \"Invoke-WebRequest -Uri 'https://github.com/googlefonts/PressStart2P/raw/main/fonts/ttf/PressStart2P-Regular.ttf' -OutFile 'f:/Personal/Starblast/assets/PressStart2P.ttf'\")",
+      "Bash(powershell -Command \"Invoke-WebRequest -Uri 'https://cdn.jsdelivr.net/npm/@fontsource/press-start-2p/files/press-start-2p-latin-400-normal.woff2' -OutFile 'f:/Personal/Starblast/assets/PressStart2P.ttf'\")",
+      "Bash(powershell -Command \"Invoke-WebRequest -Uri 'https://fonts.gstatic.com/s/pressstart2p/v15/e3t4euO8T-267oIAQAu6jDQyK3nVivM.ttf' -OutFile 'f:/Personal/Starblast/assets/PressStart2P.ttf'\")",
+      "WebFetch(domain:fonts.google.com)",
+      "WebFetch(domain:api.github.com)"
+    ]
+  }
+}

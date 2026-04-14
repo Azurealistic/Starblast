@@ -64,5 +64,5 @@ return ecs.builder()
         ecs.set(e, sprite.base,      ENEMY_SPRITES[math.random(#ENEMY_SPRITES)])
         ecs.set(e, sprite.direction, 0)
         -- Random initial cooldown so enemies don't all fire at the same time.
-        ecs.set(e, cooldown, math.random() * 2.0)
+        ecs.set(e, cooldown, math.random() * 0.5)
     end):spawn()

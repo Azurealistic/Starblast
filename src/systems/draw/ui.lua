@@ -7,9 +7,13 @@ local stages = require("groups.stages")
 local health = require("fragments.health")
 local shield = require("fragments.shield")
 local energy = require("fragments.energy")
+local score  = require("fragments.score")
 
 -- Art:
 local misc = require "sprites.misc"
+
+-- Fonts:
+local score_font = love.graphics.newFont("assets/fonts/80s-retro-future.ttf", 32)
 
 -- Adjust these to match the correct quads in misc.png:
 local HEART_FULL  = 3
@@ -27,11 +31,13 @@ return ecs.builder()
     :include(health.current, health.max)
     :include(shield.current, shield.max)
     :include(energy.current, energy.max)
+    :include(score)
     :execute(function(chunk, entity_list, entity_count)
-        local hp, hp_max, shield, shield_max, energy, energy_max = chunk:components(
+        local hp, hp_max, shield, shield_max, energy, energy_max, score_val = chunk:components(
             health.current, health.max,
             shield.current, shield.max,
-            energy.current, energy.max
+            energy.current, energy.max,
+            score
         )
 
         local pad       = PADDING * SCALE_FACTOR
@@ -68,5 +74,11 @@ return ecs.builder()
             love.graphics.setColor(r, g, b, 1)
             love.graphics.rectangle("fill", 0, screen_h - bar_h, screen_w * ratio, bar_h)
             love.graphics.setColor(1, 1, 1, 1)
+
+            -- Score (top-right corner)
+            local prev_font = love.graphics.getFont()
+            love.graphics.setFont(score_font)
+            love.graphics.printf(tostring(score_val[i]), 0, pad, screen_w - pad, "right")
+            love.graphics.setFont(prev_font)
         end
     end):spawn()
