@@ -27,6 +27,7 @@ require "systems.draw.ui"
 
 require "systems.update.input"
 require "systems.update.shooting"
+require "systems.update.movement_pattern"
 require "systems.update.physics"
 require "systems.update.clamp"
 require "systems.update.projectile"

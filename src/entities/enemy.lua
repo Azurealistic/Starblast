@@ -8,8 +8,10 @@ local damage       = require "fragments.damage"
 local sprite       = require "fragments.sprite"
 local interactable = require "fragments.interactable"
 local enemy_frag   = require "fragments.enemy"
-local cooldown     = require "fragments.cooldown"
-local spawn_grace  = require "fragments.spawn_grace"
+local cooldown         = require "fragments.cooldown"
+local spawn_grace      = require "fragments.spawn_grace"
+local movement_pattern = require "fragments.movement_pattern"
+local path_timer       = require "fragments.path_timer"
 
 local enemy = ecs.builder()
     :name("entities.enemy")
@@ -27,5 +29,7 @@ local enemy = ecs.builder()
     :set(sprite.direction, 0)
     :set(cooldown, 0)
     :set(spawn_grace)
+    :set(movement_pattern.id)
+    :set(path_timer)
 
 return enemy

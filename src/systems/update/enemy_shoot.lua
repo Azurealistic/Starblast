@@ -12,7 +12,7 @@ local cooldown        = require "fragments.cooldown"
 
 local enemy_bullet_ent = require "entities.enemy_bullet"
 
-local SHOOT_COOLDOWN  = 0.5    -- seconds between shots per enemy
+local SHOOT_COOLDOWN  = 1.5    -- seconds between shots per enemy
 local BULLET_SPEED    = 500    -- pixels/sec downward
 local BULLET_DAMAGE   = 1
 

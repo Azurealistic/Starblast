@@ -41,7 +41,7 @@ local enemies_dead   = {}   -- enemy entities to destroy
 return ecs.builder()
     :name("system.collision.update")
     :group(stages.UPDATE)
-    :include(interactable, position.x, position.y, health.current, damage)
+    :include(interactable, position.x, position.y, health.current, damage, spawn_grace)
 
     :prologue(function()
         frame_bullets = {}
