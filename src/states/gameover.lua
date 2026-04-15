@@ -83,7 +83,8 @@ function gameover:draw()
     local p   = (math.sin(t * 2.5) + 1) / 2
     local prev = love.graphics.getFont()
 
-    love.graphics.setFont(font_title)
+    ---@diagnostic disable-next-line: param-type-mismatch
+    love.graphics.setFont(font_title) 
     -- Glow halo
     love.graphics.setColor(1, 0.2, 0, 0.18 + 0.12 * p)
     love.graphics.printf("GAME OVER", -4, sh * 0.26 + 3, sw, "center")
@@ -93,6 +94,7 @@ function gameover:draw()
     love.graphics.printf("GAME OVER", 0, sh * 0.26, sw, "center")
 
     -- Final score
+    ---@diagnostic disable-next-line: param-type-mismatch
     love.graphics.setFont(font_score)
     love.graphics.setColor(1, 1, 1, 1)
     love.graphics.printf("SCORE", 0, sh * 0.50, sw, "center")
@@ -101,6 +103,7 @@ function gameover:draw()
 
     -- Blinking restart prompt (only after input delay)
     if timer > INPUT_DELAY and math.floor(blink_timer * 1.8) % 2 == 0 then
+        ---@diagnostic disable-next-line: param-type-mismatch
         love.graphics.setFont(font_prompt)
         love.graphics.setColor(0.75, 0.85, 1, 0.9)
         love.graphics.printf("PRESS SPACE TO PLAY AGAIN", 0, sh * 0.73, sw, "center")
