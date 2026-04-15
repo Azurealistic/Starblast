@@ -136,10 +136,10 @@ fleets[9] = function(_, ey, spd)
     end
 end
 
--- 10. Flankers — 3 enemies from each side strafing inward in echelon
+-- 10. Flankers — 5 enemies from each side strafing inward in echelon
 fleets[10] = function(_, ey, spd)
     local g = SPRITE_PX * 1.8
-    for i = 1, 3 do
+    for i = 1, 5 do
         spawn_one((i - 1) * g,                          ey - (i - 1) * g, spd, P.STRAFE_RIGHT, (i - 1) * 0.2)
         spawn_one(SCREEN_W - SPRITE_PX - (i - 1) * g,  ey - (i - 1) * g, spd, P.STRAFE_LEFT,  (i - 1) * 0.2)
     end
@@ -159,7 +159,7 @@ end
 
 -- 12. Sweepers (3–4) — fast horizontal sweep across the screen
 fleets[12] = function(_, ey, spd)
-    local count = math.random(3, 4)
+    local count = math.random(2, 5)
     local goLeft = math.random() < 0.5
     local pat, sx, step
     if goLeft then
@@ -220,14 +220,8 @@ fleets[17] = function(cx, ey, spd)
     end
 end
 
--- ── Weighted difficulty-scaled fleet selection ────────────────────────────────
--- {fleet_index, base_weight, late_bonus}
--- Effective weight = base + late_bonus * difficulty  (clamped ≥ 0)
--- At difficulty 0: mostly singles and small fleets
--- At difficulty 1: walls, swarms, flankers dominate
-
 local WEIGHTED = {
-    { 1,  28, -15 },  -- single        (common early, fades)
+    { 1,  28, -15 },  -- single        
     { 2,  14,   2 },  -- line
     { 3,  10,   4 },  -- V formation
     { 4,  10,   4 },  -- pincer
@@ -235,9 +229,9 @@ local WEIGHTED = {
     { 6,   6,   5 },  -- arrowhead
     { 7,   6,   5 },  -- dive pair
     { 8,   5,   5 },  -- diamond
-    { 9,   0,  14 },  -- wall          (late game)
-    { 10,  0,  12 },  -- flankers      (late game)
-    { 11,  0,  12 },  -- swarm         (late game)
+    { 9,   0,  14 },  -- wall          
+    { 10,  0,  12 },  -- flankers 
+    { 11,  0,  12 },  -- swarm         
     { 12,  5,   6 },  -- sweepers
     { 13,  4,   7 },  -- chargers
     { 14,  3,   7 },  -- orbital pair
@@ -263,8 +257,6 @@ local function pick_fleet(difficulty)
     end
     return fleets[1]
 end
-
--- ── System ───────────────────────────────────────────────────────────────────
 
 return ecs.builder()
     :name("system.spawn.update")

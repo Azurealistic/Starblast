@@ -9,11 +9,12 @@ local damage          = require "fragments.damage"
 local projectile      = require "fragments.projectile"
 local enemy_frag      = require "fragments.enemy"
 local cooldown        = require "fragments.cooldown"
+local owner           = require "fragments.owner"
 
 local enemy_bullet_ent = require "entities.enemy_bullet"
 
-local SHOOT_COOLDOWN  = 1.5    -- seconds between shots per enemy
-local BULLET_SPEED    = 500    -- pixels/sec downward
+local SHOOT_COOLDOWN  = 2.5    -- seconds between shots per enemy
+local BULLET_SPEED    = 400    -- pixels/sec downward
 local BULLET_DAMAGE   = 1
 
 -- Horizontal centering offset: enemy sprite is 8 game-px wide, bullet is also
@@ -47,6 +48,7 @@ return ecs.builder()
                 ecs.set(b, speed,         BULLET_SPEED)
                 ecs.set(b, damage,        BULLET_DAMAGE)
                 ecs.set(b, projectile.id, projectile.DENSE)
+                ecs.set(b, owner,         entity_list[i])
             end
         end
     end):spawn()

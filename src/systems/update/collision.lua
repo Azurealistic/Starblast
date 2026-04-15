@@ -11,6 +11,7 @@ local projectile     = require "fragments.projectile"
 local score          = require "fragments.score"
 local enemy_bullet   = require "fragments.enemy_bullet"
 local spawn_grace    = require "fragments.spawn_grace"
+local owner          = require "fragments.owner"
 
 -- AABB test: both sprites are treated as (8 * SCALE_FACTOR) squares.
 local function aabb(ax, ay, bx, by)
@@ -29,6 +30,10 @@ local bullet_query = ecs.builder()
 
 local player_query = ecs.builder()
     :include(interactor, position.x, position.y, health.current, shield.current, score)
+    :spawn()
+
+local owned_bullet_query = ecs.builder()
+    :include(enemy_bullet, owner)
     :spawn()
 
 -- Frame-level scratch tables (reset each prologue, consumed in execute + epilogue).
@@ -158,6 +163,27 @@ return ecs.builder()
         for _, e in ipairs(bullets_dead) do
             if ecs.alive(e) then ecs.destroy(e) end
         end
+
+        -- Build a set of dying enemy IDs for O(1) lookup.
+        local dead_set = {}
+        for _, e in ipairs(enemies_dead) do
+            dead_set[e] = true
+        end
+
+        -- Collect enemy bullets whose owner is dying (no structural changes during iteration).
+        -- local orphaned_bullets = {}
+        -- for bchunk, bentity_list, bentity_count in ecs.execute(owned_bullet_query) do
+        --     local owners = bchunk:components(owner)
+        --     for j = 1, bentity_count do
+        --         if dead_set[owners[j]] then
+        --             orphaned_bullets[#orphaned_bullets + 1] = bentity_list[j]
+        --         end
+        --     end
+        -- end
+        -- for _, b in ipairs(orphaned_bullets) do
+        --     if ecs.alive(b) then ecs.destroy(b) end
+        -- end
+
         for _, e in ipairs(enemies_dead) do
             if ecs.alive(e) then ecs.destroy(e) end
         end

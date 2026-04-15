@@ -29,9 +29,6 @@ return ecs.builder()
     :name("system.enemy_bullet_collision.update")
     :group(stages.UPDATE)
     :include(enemy_bullet, position.x, position.y, damage)
-    -- ------------------------------------------------------------------ --
-    -- PROLOGUE: snapshot the player before iterating bullet chunks.
-    -- ------------------------------------------------------------------ --
     :prologue(function()
         frame_players = {}
         bullets_dead  = {}
@@ -51,9 +48,6 @@ return ecs.builder()
             end
         end
     end)
-    -- ------------------------------------------------------------------ --
-    -- EXECUTE: check each enemy bullet against the player.
-    -- ------------------------------------------------------------------ --
     :execute(function(chunk, entity_list, entity_count)
         local bx, by, bdmg = chunk:components(position.x, position.y, damage)
 
@@ -73,9 +67,6 @@ return ecs.builder()
             end
         end
     end)
-    -- ------------------------------------------------------------------ --
-    -- EPILOGUE: write player state back and destroy spent bullets.
-    -- ------------------------------------------------------------------ --
     :epilogue(function()
         for _, p in ipairs(frame_players) do
             if p.changed then

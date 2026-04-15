@@ -8,38 +8,47 @@ local velocity        = require "fragments.velocity"
 local speed           = require "fragments.speed"
 local damage          = require "fragments.damage"
 local projectile      = require "fragments.projectile"
+local ammo            = require "fragments.ammo"
 local projectile_ent  = require "entities.projectile"
 
--- How many seconds must pass between shots.
-local SHOOT_COOLDOWN   = 0.15
--- Bullet speed as a multiplier of the player's current speed.
+local SHOOT_COOLDOWN   = 0.25
 local BULLET_SPEED_MUL = 1
--- Bullet damage value.
 local BULLET_DAMAGE    = 1
+local REGEN_RATE       = 0.75  -- seconds per bullet
 
-local cooldown = 0
+local shoot_cooldown = 0
+local regen_timer    = 0
 
 return ecs.builder()
     :name("system.shooting.update")
     :group(stages.UPDATE)
-    :include(controllable, position.x, position.y, speed, projectile.id)
-    :execute(function(chunk, entity_list, entity_count)
+    :include(controllable, position.x, position.y, speed, projectile.id, ammo.current, ammo.max)
+    :execute(function(chunk, _, entity_count)
         local dt = ecs.get(deltatime, deltatime)
-        cooldown = cooldown + dt
+        local ammo_cur, ammo_max, px, py, player_speed, ptype = chunk:components(
+            ammo.current, ammo.max, position.x, position.y, speed, projectile.id)
 
-        if not love.keyboard.isDown("space") or cooldown < SHOOT_COOLDOWN then
+        -- Regen 1 bullet per second, always.
+        regen_timer = regen_timer + dt
+        if regen_timer >= REGEN_RATE then
+            regen_timer = regen_timer - REGEN_RATE
+            for i = 1, entity_count do
+                ammo_cur[i] = math.min(ammo_max[i], ammo_cur[i] + 1)
+            end
+        end
+
+        -- Shoot.
+        shoot_cooldown = shoot_cooldown + dt
+        if not love.keyboard.isDown("space") or shoot_cooldown < SHOOT_COOLDOWN then
             return
         end
-        cooldown = 0
-
-        local px, py, player_speed, ptype = chunk:components(position.x, position.y, speed, projectile.id)
+        shoot_cooldown = 0
 
         for i = 1, entity_count do
-            local bullet_speed = player_speed[i] * BULLET_SPEED_MUL
+            if ammo_cur[i] <= 0 then goto continue end
+            ammo_cur[i] = ammo_cur[i] - 1
 
-            -- Spawn at the horizontal centre of the ship, flush with its top edge.
-            -- Ship sprite is 8 px wide at SCALE_FACTOR, so centre offset = 4 * SCALE_FACTOR.
-            -- Bullet sprite is also 8 px wide, so its left edge lands at the same px.
+            local bullet_speed = player_speed[i] * BULLET_SPEED_MUL
             local bx = px[i]
             local by = py[i] - (8 * SCALE_FACTOR)
 
@@ -51,5 +60,6 @@ return ecs.builder()
             ecs.set(proj, speed,         bullet_speed)
             ecs.set(proj, damage,        BULLET_DAMAGE)
             ecs.set(proj, projectile.id, ptype[i])
+            ::continue::
         end
     end):spawn()
