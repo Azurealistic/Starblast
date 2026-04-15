@@ -11,9 +11,9 @@ local projectile     = require "fragments.projectile"
 local score          = require "fragments.score"
 local enemy_bullet   = require "fragments.enemy_bullet"
 local spawn_grace    = require "fragments.spawn_grace"
-local owner           = require "fragments.owner"
 local explosion_timer = require "fragments.explosion_timer"
 local explosion_ent   = require "entities.explosion"
+local player_state    = require "player_state"
 
 -- AABB test: both sprites are treated as (8 * SCALE_FACTOR) squares.
 local function aabb(ax, ay, bx, by)
@@ -32,10 +32,6 @@ local bullet_query = ecs.builder()
 
 local player_query = ecs.builder()
     :include(interactor, position.x, position.y, health.current, shield.current, score)
-    :spawn()
-
-local owned_bullet_query = ecs.builder()
-    :include(enemy_bullet, owner)
     :spawn()
 
 -- Frame-level scratch tables (reset each prologue, consumed in execute + epilogue).
@@ -134,14 +130,17 @@ return ecs.builder()
             if not kills[eid] then
                 for _, p in ipairs(frame_players) do
                     if aabb(ex[i], ey[i], p.x, p.y) then
-                        -- Shields absorb hits before health.
-                        if p.sh > 0 then
-                            p.sh = p.sh - edamage[i]
-                        else
-                            p.hp = p.hp - edamage[i]
+                        -- Damage only lands when the player is not invulnerable.
+                        if player_state.invuln <= 0 then
+                            if p.sh > 0 then
+                                p.sh = p.sh - edamage[i]
+                            else
+                                p.hp = p.hp - edamage[i]
+                            end
+                            player_state.invuln = 0.5
+                            p.changed = true
                         end
-                        p.changed = true
-                        -- Enemy is destroyed on contact with the player.
+                        -- Enemy is always destroyed on contact.
                         kills[eid] = true
                         enemies_dead[#enemies_dead + 1] = eid
                         break
