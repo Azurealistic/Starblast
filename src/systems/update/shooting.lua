@@ -14,7 +14,7 @@ local projectile_ent  = require "entities.projectile"
 local SHOOT_COOLDOWN   = 0.25
 local BULLET_SPEED_MUL = 1
 local BULLET_DAMAGE    = 1
-local REGEN_RATE       = 0.75  -- seconds per bullet
+local REGEN_RATE       = 0.50  -- seconds per bullet
 
 local shoot_cooldown = 0
 local regen_timer    = 0

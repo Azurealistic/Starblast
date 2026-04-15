@@ -23,6 +23,7 @@ require "systems.draw.projectile"
 require "systems.draw.boost"
 require "systems.draw.ships"
 require "systems.draw.enemy"
+require "systems.draw.explosion"
 require "systems.draw.ui"
 
 require "systems.update.input"
@@ -36,6 +37,7 @@ require "systems.update.collision"
 require "systems.update.enemy_shoot"
 require "systems.update.enemy_bullet_collision"
 require "systems.update.spawn_grace"
+require "systems.update.explosion"
 
 -- Entities:
 local player = require "entities.player"

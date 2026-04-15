@@ -11,7 +11,9 @@ local projectile     = require "fragments.projectile"
 local score          = require "fragments.score"
 local enemy_bullet   = require "fragments.enemy_bullet"
 local spawn_grace    = require "fragments.spawn_grace"
-local owner          = require "fragments.owner"
+local owner           = require "fragments.owner"
+local explosion_timer = require "fragments.explosion_timer"
+local explosion_ent   = require "entities.explosion"
 
 -- AABB test: both sprites are treated as (8 * SCALE_FACTOR) squares.
 local function aabb(ax, ay, bx, by)
@@ -164,27 +166,18 @@ return ecs.builder()
             if ecs.alive(e) then ecs.destroy(e) end
         end
 
-        -- Build a set of dying enemy IDs for O(1) lookup.
-        local dead_set = {}
+        -- Spawn explosion and destroy each dead enemy.
         for _, e in ipairs(enemies_dead) do
-            dead_set[e] = true
-        end
-
-        -- Collect enemy bullets whose owner is dying (no structural changes during iteration).
-        -- local orphaned_bullets = {}
-        -- for bchunk, bentity_list, bentity_count in ecs.execute(owned_bullet_query) do
-        --     local owners = bchunk:components(owner)
-        --     for j = 1, bentity_count do
-        --         if dead_set[owners[j]] then
-        --             orphaned_bullets[#orphaned_bullets + 1] = bentity_list[j]
-        --         end
-        --     end
-        -- end
-        -- for _, b in ipairs(orphaned_bullets) do
-        --     if ecs.alive(b) then ecs.destroy(b) end
-        -- end
-
-        for _, e in ipairs(enemies_dead) do
-            if ecs.alive(e) then ecs.destroy(e) end
+            if ecs.alive(e) then
+                local ex = ecs.get(e, position.x)
+                local ey = ecs.get(e, position.y)
+                if ex and ey then
+                    local exp = explosion_ent:spawn()
+                    ecs.set(exp, position.x,       ex)
+                    ecs.set(exp, position.y,       ey)
+                    ecs.set(exp, explosion_timer,  0)
+                end
+                ecs.destroy(e)
+            end
         end
     end):spawn()
