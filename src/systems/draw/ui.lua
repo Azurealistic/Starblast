@@ -8,6 +8,7 @@ local health = require("fragments.health")
 local shield = require("fragments.shield")
 local energy = require("fragments.energy")
 local score  = require("fragments.score")
+local ammo   = require("fragments.ammo")
 
 -- Art:
 local misc = require "sprites.misc"
@@ -32,12 +33,14 @@ return ecs.builder()
     :include(shield.current, shield.max)
     :include(energy.current, energy.max)
     :include(score)
-    :execute(function(chunk, entity_list, entity_count)
-        local hp, hp_max, shield, shield_max, energy, energy_max, score_val = chunk:components(
+    :include(ammo.current, ammo.max)
+    :execute(function(chunk, _, entity_count)
+        local hp, hp_max, sh, sh_max, en, en_max, score_val, ammo_cur, ammo_max = chunk:components(
             health.current, health.max,
             shield.current, shield.max,
             energy.current, energy.max,
-            score
+            score,
+            ammo.current, ammo.max
         )
 
         local pad       = PADDING * SCALE_FACTOR
@@ -54,6 +57,15 @@ return ecs.builder()
         local g = 0.75 + 0.25 * p
         local b = 0.10 + 0.30 * p
 
+        -- Blue pulse for ammo bar
+        local bp = (math.sin(t * 4) + 1) / 2
+        local br = 0.10 + 0.15 * bp
+        local bg = 0.40 + 0.20 * bp
+        local bb = 0.95 + 0.05 * bp
+
+        local seg_h    = SCALE_FACTOR * 2
+        local ammo_y   = screen_h - bar_h - seg_h - SCALE_FACTOR
+
         for i = 1, entity_count do
             -- Hearts (top row)
             for h = 1, hp_max[i] do
@@ -63,16 +75,37 @@ return ecs.builder()
             end
 
             -- Shields (row below hearts)
-            for s = 1, shield_max[i] do
+            for s = 1, sh_max[i] do
                 local x = pad + (s - 1) * step
-                local quad = s <= shield[i] and SHIELD_FULL or SHIELD_EMPTY
+                local quad = s <= sh[i] and SHIELD_FULL or SHIELD_EMPTY
                 love.graphics.draw(misc.sheet, misc.quads[quad], x, row2, 0, SCALE_FACTOR, SCALE_FACTOR)
             end
 
             -- Energy bar (bottom of screen, depletes right to left)
-            local ratio = energy_max[i] > 0 and (energy[i] / energy_max[i]) or 0
+            local ratio = en_max[i] > 0 and (en[i] / en_max[i]) or 0
             love.graphics.setColor(r, g, b, 1)
             love.graphics.rectangle("fill", 0, screen_h - bar_h, screen_w * ratio, bar_h)
+            love.graphics.setColor(1, 1, 1, 1)
+
+            -- Ammo bar — segmented, blue/glowing, above energy bar
+            local max_a   = ammo_max[i] > 0 and ammo_max[i] or 1
+            local slot_w  = screen_w / max_a
+            local seg_w   = slot_w - 2
+            for seg = 1, max_a do
+                local sx = (seg - 1) * slot_w + 1
+                if seg <= ammo_cur[i] then
+                    -- Glow halo
+                    love.graphics.setColor(br * 0.5, bg * 0.5, bb, 0.25)
+                    love.graphics.rectangle("fill", sx - 1, ammo_y - 1, seg_w + 2, seg_h + 2)
+                    -- Solid segment
+                    love.graphics.setColor(br, bg, bb, 1)
+                    love.graphics.rectangle("fill", sx, ammo_y, seg_w, seg_h)
+                else
+                    -- Empty slot
+                    love.graphics.setColor(0.04, 0.08, 0.25, 0.6)
+                    love.graphics.rectangle("fill", sx, ammo_y, seg_w, seg_h)
+                end
+            end
             love.graphics.setColor(1, 1, 1, 1)
 
             -- Score (top-right corner)
