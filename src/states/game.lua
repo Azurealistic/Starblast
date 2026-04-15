@@ -3,6 +3,7 @@
 
 -- Imports:
 local ecs = require "libs.evolved"
+local fsm = require "libs.gamestate"
 
 -- Sprites:
 local ships = require "sprites.ships"
@@ -12,9 +13,11 @@ local misc = require "sprites.misc"
 -- ECS:
 -- Utility fragments:
 local deltatime = require "fragments.deltatime"
-local sprite = require "fragments.sprite"
-local speed = require "fragments.speed"
-local score = require "fragments.score"
+local sprite    = require "fragments.sprite"
+local speed     = require "fragments.speed"
+local score     = require "fragments.score"
+local health    = require "fragments.health"
+local position  = require "fragments.position"
 
 -- System related:
 local stages = require "groups.stages"
@@ -45,6 +48,9 @@ local player_ship_ids = {2, 12, 22, 32, 42}
 
 -- Game State:
 local game = {}
+
+-- Query used in leave() to clean up all ECS entities.
+local cleanup_query = ecs.builder():include(position.x):spawn()
 
 -- Other variables used:
 local bg_sheet
@@ -87,8 +93,10 @@ function game:enter()
     -- Always starts on first ship then we can potentially upgrade it!
     ecs.set(self.player, sprite.base, player_ship_ids[1])
     ecs.set(self.player, sprite.direction, 0) -- For indicating left or right movement!
-    -- Load music!
-    self.source = love.audio.newSource("assets/music/7.wav", "stream")
+    -- Load music (only once; keep it playing through the gameover screen and restarts).
+    if not self.source then
+        self.source = love.audio.newSource("assets/music/7.wav", "stream")
+    end
 end
 
 function game:update(dt)
@@ -110,6 +118,14 @@ function game:update(dt)
         if layer.y >= screen_h then
             layer.y = layer.y - screen_h
         end
+    end
+
+    -- Check for player death.
+    local hp = ecs.get(self.player, health.current)
+    if hp and hp <= 0 then
+        local final = ecs.get(self.player, score) or 0
+        fsm.switch(require("states.gameover"), final, bg_sheet, bg_quads, parallax, speed_multipler)
+        return
     end
 
     -- If music is not playing, play it!
@@ -136,6 +152,15 @@ function game:draw()
 end
 
 function game:leave()
+    local to_destroy = {}
+    for _, entity_list, entity_count in ecs.execute(cleanup_query) do
+        for i = 1, entity_count do
+            to_destroy[#to_destroy + 1] = entity_list[i]
+        end
+    end
+    for _, e in ipairs(to_destroy) do
+        if ecs.alive(e) then ecs.destroy(e) end
+    end
 end
 
 return game
