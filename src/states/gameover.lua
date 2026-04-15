@@ -1,5 +1,6 @@
 local fsm       = require "libs.gamestate"
 local game      = require "states.game"
+local highscore = require "highscore"
 
 local gameover = {}
 
@@ -20,6 +21,7 @@ local speed_mult = 2
 
 function gameover:enter(_, score, sheet, quads, par, spd)
     final_score = score or 0
+    highscore.update(final_score)
     timer       = 0
     blink_timer = 0
 
@@ -97,16 +99,22 @@ function gameover:draw()
     ---@diagnostic disable-next-line: param-type-mismatch
     love.graphics.setFont(font_score)
     love.graphics.setColor(1, 1, 1, 1)
-    love.graphics.printf("SCORE", 0, sh * 0.50, sw, "center")
+    love.graphics.printf("SCORE", 0, sh * 0.47, sw, "center")
     love.graphics.setColor(0.95, 0.85, 0.2, 1)
-    love.graphics.printf(tostring(final_score), 0, sh * 0.58, sw, "center")
+    love.graphics.printf(tostring(final_score), 0, sh * 0.53, sw, "center")
+
+    -- Best score
+    love.graphics.setColor(0.4, 0.85, 1, 1)
+    love.graphics.printf("BEST", 0, sh * 0.62, sw, "center")
+    love.graphics.setColor(0.6, 0.95, 1, 1)
+    love.graphics.printf(tostring(highscore.get()), 0, sh * 0.68, sw, "center")
 
     -- Blinking restart prompt (only after input delay)
     if timer > INPUT_DELAY and math.floor(blink_timer * 1.8) % 2 == 0 then
         ---@diagnostic disable-next-line: param-type-mismatch
         love.graphics.setFont(font_prompt)
         love.graphics.setColor(0.75, 0.85, 1, 0.9)
-        love.graphics.printf("PRESS SPACE TO PLAY AGAIN", 0, sh * 0.73, sw, "center")
+        love.graphics.printf("PRESS SPACE TO PLAY AGAIN", 0, sh * 0.82, sw, "center")
     end
 
     love.graphics.setFont(prev)

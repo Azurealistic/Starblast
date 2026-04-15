@@ -16,6 +16,9 @@ local misc = require "sprites.misc"
 -- Fonts:
 local score_font = love.graphics.newFont("assets/fonts/80s-retro-future.ttf", 32)
 
+-- High score:
+local highscore = require "highscore"
+
 -- Adjust these to match the correct quads in misc.png:
 local HEART_FULL  = 3
 local HEART_EMPTY = 5
@@ -111,7 +114,12 @@ return ecs.builder()
             -- Score (top-right corner)
             local prev_font = love.graphics.getFont()
             love.graphics.setFont(score_font)
+            love.graphics.setColor(1, 1, 1, 1)
             love.graphics.printf(tostring(score_val[i]), 0, pad, screen_w - pad, "right")
+            -- High score just below, in muted gold
+            love.graphics.setColor(0.85, 0.65, 0.1, 0.75)
+            love.graphics.printf(tostring(highscore.get()), 0, pad + 36, screen_w - pad, "right")
+            love.graphics.setColor(1, 1, 1, 1)
             love.graphics.setFont(prev_font)
         end
     end):spawn()

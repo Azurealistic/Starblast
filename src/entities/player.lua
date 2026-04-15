@@ -12,7 +12,8 @@ local score = require "fragments.score"
 local projectile = require "fragments.projectile"
 local boost = require "fragments.boost"
 local energy = require "fragments.energy"
-local ammo   = require "fragments.ammo"
+local ammo         = require "fragments.ammo"
+local damage_timer = require "fragments.damage_timer"
 
 local player = ecs.builder()
     :name("entities.player")
@@ -36,5 +37,6 @@ local player = ecs.builder()
     :set(energy.max, 100)
     :set(ammo.current, 20)
     :set(ammo.max, 20)
+    :set(damage_timer)
 
 return player

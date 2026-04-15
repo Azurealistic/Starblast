@@ -16,8 +16,9 @@ local deltatime = require "fragments.deltatime"
 local sprite    = require "fragments.sprite"
 local speed     = require "fragments.speed"
 local score     = require "fragments.score"
-local health    = require "fragments.health"
-local position  = require "fragments.position"
+local health       = require "fragments.health"
+local position     = require "fragments.position"
+local player_state = require "player_state"
 
 -- System related:
 local stages = require "groups.stages"
@@ -41,6 +42,7 @@ require "systems.update.enemy_shoot"
 require "systems.update.enemy_bullet_collision"
 require "systems.update.spawn_grace"
 require "systems.update.explosion"
+require "systems.update.damage_timer"
 
 -- Entities:
 local player = require "entities.player"
@@ -87,6 +89,9 @@ function game:enter()
             bg_quads[idx] = love.graphics.newQuad(col * cw, row * ch, cw, ch, sw, sh)
         end
     end
+
+    -- Reset per-run player state.
+    player_state.invuln = 0
 
     -- Player initial setup!
     self.player = player:spawn()

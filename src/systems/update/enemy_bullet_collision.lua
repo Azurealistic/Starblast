@@ -6,8 +6,8 @@ local health       = require "fragments.health"
 local shield       = require "fragments.shield"
 local damage       = require "fragments.damage"
 local interactor   = require "fragments.interactor"
-local score        = require "fragments.score"
 local enemy_bullet = require "fragments.enemy_bullet"
+local player_state = require "player_state"
 
 -- AABB test matching the 8-game-pixel sprite size used everywhere.
 local function aabb(ax, ay, bx, by)
@@ -54,13 +54,16 @@ return ecs.builder()
         for i = 1, entity_count do
             for _, p in ipairs(frame_players) do
                 if aabb(bx[i], by[i], p.x, p.y) then
-                    -- Shields absorb hits before health.
-                    if p.sh > 0 then
-                        p.sh = p.sh - bdmg[i]
-                    else
-                        p.hp = p.hp - bdmg[i]
+                    if player_state.invuln <= 0 then
+                        -- Shields absorb hits before health.
+                        if p.sh > 0 then
+                            p.sh = p.sh - bdmg[i]
+                        else
+                            p.hp = p.hp - bdmg[i]
+                        end
+                        player_state.invuln = 0.5
+                        p.changed = true
                     end
-                    p.changed = true
                     bullets_dead[#bullets_dead + 1] = entity_list[i]
                     break  -- one bullet hits one player at most
                 end
