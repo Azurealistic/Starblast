@@ -15,4 +15,7 @@ return ecs.builder()
         if player_state.invuln > 0 then
             player_state.invuln = math.max(0, player_state.invuln - dt)
         end
+        if player_state.double_shoot > 0 then
+            player_state.double_shoot = math.max(0, player_state.double_shoot - dt)
+        end
     end):spawn()

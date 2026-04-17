@@ -10,6 +10,7 @@ local damage          = require "fragments.damage"
 local projectile      = require "fragments.projectile"
 local ammo            = require "fragments.ammo"
 local projectile_ent  = require "entities.projectile"
+local player_state    = require "player_state"
 
 local SHOOT_COOLDOWN   = 0.25
 local BULLET_SPEED_MUL = 1
@@ -46,20 +47,45 @@ return ecs.builder()
 
         for i = 1, entity_count do
             if ammo_cur[i] <= 0 then goto continue end
-            ammo_cur[i] = ammo_cur[i] - 1
 
             local bullet_speed = player_speed[i] * BULLET_SPEED_MUL
-            local bx = px[i]
             local by = py[i] - (8 * SCALE_FACTOR)
 
-            local proj = projectile_ent:spawn()
-            ecs.set(proj, position.x,    bx)
-            ecs.set(proj, position.y,    by)
-            ecs.set(proj, velocity.x,    0)
-            ecs.set(proj, velocity.y,    -bullet_speed)
-            ecs.set(proj, speed,         bullet_speed)
-            ecs.set(proj, damage,        BULLET_DAMAGE)
-            ecs.set(proj, projectile.id, ptype[i])
+            if player_state.double_shoot > 0 and ammo_cur[i] >= 2 then
+                -- Double shoot: two offset bullets, costs 2 ammo.
+                ammo_cur[i] = ammo_cur[i] - 2
+                local offset = 4 * SCALE_FACTOR
+
+                local p1 = projectile_ent:spawn()
+                ecs.set(p1, position.x,    px[i] - offset)
+                ecs.set(p1, position.y,    by)
+                ecs.set(p1, velocity.x,    0)
+                ecs.set(p1, velocity.y,    -bullet_speed)
+                ecs.set(p1, speed,         bullet_speed)
+                ecs.set(p1, damage,        BULLET_DAMAGE)
+                ecs.set(p1, projectile.id, ptype[i])
+
+                local p2 = projectile_ent:spawn()
+                ecs.set(p2, position.x,    px[i] + offset)
+                ecs.set(p2, position.y,    by)
+                ecs.set(p2, velocity.x,    0)
+                ecs.set(p2, velocity.y,    -bullet_speed)
+                ecs.set(p2, speed,         bullet_speed)
+                ecs.set(p2, damage,        BULLET_DAMAGE)
+                ecs.set(p2, projectile.id, ptype[i])
+            else
+                -- Single shot.
+                ammo_cur[i] = ammo_cur[i] - 1
+
+                local proj = projectile_ent:spawn()
+                ecs.set(proj, position.x,    px[i])
+                ecs.set(proj, position.y,    by)
+                ecs.set(proj, velocity.x,    0)
+                ecs.set(proj, velocity.y,    -bullet_speed)
+                ecs.set(proj, speed,         bullet_speed)
+                ecs.set(proj, damage,        BULLET_DAMAGE)
+                ecs.set(proj, projectile.id, ptype[i])
+            end
             ::continue::
         end
     end):spawn()
