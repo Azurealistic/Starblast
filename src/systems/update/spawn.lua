@@ -14,10 +14,10 @@ local path_timer       = require "fragments.path_timer"
 
 local enemy_ent = require "entities.enemy"
 
-local SPAWN_INTERVAL_BASE = 5   -- seconds between spawns at score 0
-local SPAWN_INTERVAL_MIN  = 2.5  -- fastest spawn rate at full difficulty
+local SPAWN_INTERVAL_BASE = 6   -- seconds between spawns at score 0
+local SPAWN_INTERVAL_MIN  = 2  -- fastest spawn rate at full difficulty
 local ENEMY_SPEED_BASE    = 300
-local ENEMY_SPEED_MAX     = 600
+local ENEMY_SPEED_MAX     = 900
 
 local ENEMY_SPRITES = {  5,  6,  7,  8,  9, 10,
                         15, 16, 17, 18, 19, 20,
