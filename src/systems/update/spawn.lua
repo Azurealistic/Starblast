@@ -108,12 +108,15 @@ fleets[6] = function(cx, ey, spd)
     spawn_one(cx + g*3, ey - g*3, spd, P.DIVE_RIGHT, 0)
 end
 
--- 7. Dive pair — two enemies from opposite sides of the screen
+-- 7. Dive quad — two enemies from opposite sides of the screen
 fleets[7] = function(_, ey, spd)
+    local g = SPRITE_PX * 1.5
     local left  = math.random(0,                         math.floor(SCREEN_W / 3))
     local right = math.random(math.floor(SCREEN_W * 2 / 3), SCREEN_W - SPRITE_PX)
     spawn_one(left,  ey, spd, P.DIVE_RIGHT, 0)
     spawn_one(right, ey, spd, P.DIVE_LEFT,  0)
+    spawn_one(left,  ey - g, spd, P.DIVE_RIGHT, 0)
+    spawn_one(right, ey - g, spd, P.DIVE_LEFT,  0)
 end
 
 -- 8. Diamond (4) — zigzag with staggered phase
