@@ -28,6 +28,7 @@ require "systems.draw.boost"
 require "systems.draw.ships"
 require "systems.draw.enemy"
 require "systems.draw.explosion"
+require "systems.draw.pickup"
 require "systems.draw.ui"
 
 require "systems.update.input"
@@ -42,6 +43,7 @@ require "systems.update.enemy_shoot"
 require "systems.update.enemy_bullet_collision"
 require "systems.update.spawn_grace"
 require "systems.update.explosion"
+require "systems.update.pickup"
 require "systems.update.damage_timer"
 
 -- Entities:
@@ -91,7 +93,8 @@ function game:enter()
     end
 
     -- Reset per-run player state.
-    player_state.invuln = 0
+    player_state.invuln       = 0
+    player_state.double_shoot = 0
 
     -- Player initial setup!
     self.player = player:spawn()
@@ -112,7 +115,7 @@ function game:update(dt)
     ecs.process(stages.UPDATE)
 
     -- If we need to make the gameplay faster based off the score, we can do so automatically here!
-    speed_multipler = ((ecs.get(self.player, score) / 10000) + 2)
+    speed_multipler = ((ecs.get(self.player, score) / 5000) + 2)
     -- Set the speed we are allowed to move with!
     ecs.set(self.player, speed, speed_multipler * move_multipler)
 

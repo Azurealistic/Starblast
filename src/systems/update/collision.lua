@@ -13,6 +13,8 @@ local enemy_bullet   = require "fragments.enemy_bullet"
 local spawn_grace    = require "fragments.spawn_grace"
 local explosion_timer = require "fragments.explosion_timer"
 local explosion_ent   = require "entities.explosion"
+local pickup_type_frag = require "fragments.pickup_type"
+local pickup_ent       = require "entities.pickup"
 local player_state    = require "player_state"
 
 -- AABB test: both sprites are treated as (8 * SCALE_FACTOR) squares.
@@ -40,6 +42,31 @@ local frame_players  = {}   -- { entity, x, y, hp, sh, score_val, changed }
 local kills          = {}   -- enemy entity → true  (deduplication guard)
 local bullets_dead   = {}   -- bullet entities to destroy
 local enemies_dead   = {}   -- enemy entities to destroy
+
+-- Weighted drop table: {type, weight}. Total weight = 100.
+local DROP_TABLE = {
+    { t = pickup_type_frag.COIN_100,     w = 30 },
+    { t = pickup_type_frag.COIN_200,     w = 20 },
+    { t = pickup_type_frag.COIN_300,     w = 15 },
+    { t = pickup_type_frag.COIN_400,     w = 10 },
+    { t = pickup_type_frag.HEART,        w = 8  },
+    { t = pickup_type_frag.SHIELD,       w = 8  },
+    { t = pickup_type_frag.BOOST,        w = 4  },
+    { t = pickup_type_frag.AMMO,         w = 3  },
+    { t = pickup_type_frag.DOUBLE_SHOOT, w = 2  },
+}
+local DROP_TOTAL = 100
+local DROP_CHANCE = 0.35   -- 35% chance an enemy drops anything on death
+
+local function pick_drop()
+    local r = math.random() * DROP_TOTAL
+    local acc = 0
+    for _, entry in ipairs(DROP_TABLE) do
+        acc = acc + entry.w
+        if r <= acc then return entry.t end
+    end
+    return pickup_type_frag.COIN_100
+end
 
 return ecs.builder()
     :name("system.collision.update")
@@ -116,10 +143,13 @@ return ecs.builder()
                     if eh[i] <= 0 then
                         kills[eid] = true
                         enemies_dead[#enemies_dead + 1] = eid
-                        -- Award 100 score per kill to the player.
+                        -- Award 100 score per kill, plus a 25% chance of +0–50 bonus.
                         for _, p in ipairs(frame_players) do
                             p.score_val = p.score_val + 100
-                            p.changed   = true
+                            if math.random() < 0.25 then
+                                p.score_val = p.score_val + math.random(0, 50)
+                            end
+                            p.changed = true
                         end
                         break
                     end
@@ -165,16 +195,23 @@ return ecs.builder()
             if ecs.alive(e) then ecs.destroy(e) end
         end
 
-        -- Spawn explosion and destroy each dead enemy.
+        -- Spawn explosion, maybe drop a pickup, then destroy each dead enemy.
         for _, e in ipairs(enemies_dead) do
             if ecs.alive(e) then
                 local ex = ecs.get(e, position.x)
                 local ey = ecs.get(e, position.y)
                 if ex and ey then
                     local exp = explosion_ent:spawn()
-                    ecs.set(exp, position.x,       ex)
-                    ecs.set(exp, position.y,       ey)
-                    ecs.set(exp, explosion_timer,  0)
+                    ecs.set(exp, position.x,      ex)
+                    ecs.set(exp, position.y,      ey)
+                    ecs.set(exp, explosion_timer, 0)
+
+                    if math.random() < DROP_CHANCE then
+                        local pu = pickup_ent:spawn()
+                        ecs.set(pu, position.x,      ex)
+                        ecs.set(pu, position.y,      ey)
+                        ecs.set(pu, pickup_type_frag.id, pick_drop())
+                    end
                 end
                 ecs.destroy(e)
             end
