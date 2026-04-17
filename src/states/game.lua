@@ -70,6 +70,10 @@ local parallax = {
     { quad_idx = 6, y = 0, speed = 256 },
 }
 
+-- Intro overlay fonts (loaded once, reused on restart).
+local font_controls
+local font_prompt
+
 -- FSM Hooked functionality which auto runs during loop!
 function game:enter()
     -- Load the sprites!
@@ -96,6 +100,11 @@ function game:enter()
     player_state.invuln       = 0
     player_state.double_shoot = 0
 
+    -- Intro screen: wait for the player to press Space before gameplay begins.
+    self.started = false
+    font_controls = font_controls or love.graphics.newFont(22)
+    font_prompt   = font_prompt   or love.graphics.newFont(30)
+
     -- Player initial setup!
     self.player = player:spawn()
     -- Always starts on first ship then we can potentially upgrade it!
@@ -108,6 +117,31 @@ function game:enter()
 end
 
 function game:update(dt)
+    local screen_h = 256 * SCALE_FACTOR
+
+    -- Parallax scrolls at the base speed (score=0 multiplier = 2) before the game starts,
+    -- then at the live speed_multipler once gameplay is running.
+    local scroll_speed = self.started and speed_multipler or 2.0
+    for _, layer in ipairs(parallax) do
+        layer.y = layer.y + layer.speed * dt * scroll_speed
+        if layer.y >= screen_h then
+            layer.y = layer.y - screen_h
+        end
+    end
+
+    -- If music is not playing, play it!
+    if not self.source:isPlaying() then
+        love.audio.play(self.source)
+    end
+
+    -- Intro: wait for Space before starting gameplay.
+    if not self.started then
+        if love.keyboard.isDown("space") then
+            self.started = true
+        end
+        return
+    end
+
     -- We need a way to keep track of how much time has elapsed in the game, so we use deltatime!
     ecs.set(deltatime, deltatime, dt)
 
@@ -119,26 +153,12 @@ function game:update(dt)
     -- Set the speed we are allowed to move with!
     ecs.set(self.player, speed, speed_multipler * move_multipler)
 
-    -- Update the parallax for the background.
-    local screen_h = 256 * SCALE_FACTOR
-    for _, layer in ipairs(parallax) do
-        layer.y = layer.y + layer.speed * dt * speed_multipler
-        if layer.y >= screen_h then
-            layer.y = layer.y - screen_h
-        end
-    end
-
     -- Check for player death.
     local hp = ecs.get(self.player, health.current)
     if hp and hp <= 0 then
         local final = ecs.get(self.player, score) or 0
         fsm.switch(require("states.gameover"), final, bg_sheet, bg_quads, parallax, speed_multipler)
         return
-    end
-
-    -- If music is not playing, play it!
-    if not self.source:isPlaying() then
-        love.audio.play(self.source)
     end
 end
 
@@ -155,8 +175,32 @@ function game:draw()
         love.graphics.draw(bg_sheet, q, 0, layer.y - screen_h, 0, SCALE_FACTOR, SCALE_FACTOR)
     end
 
-     -- Draw all entities required!
+    -- Draw all entities required!
     ecs.process(stages.DRAW)
+
+    -- Intro overlay: shown until the player presses Space.
+    if not self.started then
+        local sw = GAME_WIDTH  * SCALE_FACTOR
+        local sh = GAME_HEIGHT * SCALE_FACTOR
+
+        -- Semi-transparent dark panel behind the text.
+        love.graphics.setColor(0, 0, 0, 0.55)
+        love.graphics.rectangle("fill", 0, sh * 0.60, sw, sh * 0.26)
+
+        -- Controls lines (three centered rows).
+        love.graphics.setColor(0.8, 0.8, 0.8, 1)
+        love.graphics.setFont(font_controls)
+        love.graphics.printf("WASD to Move\nSpace to Shoot\nShift to Boost", 0, sh * 0.4, sw, "center")
+
+        -- Blinking "SPACE TO START" (~2 blinks/sec).
+        if math.floor(love.timer.getTime() * 2) % 2 == 0 then
+            love.graphics.setColor(1, 0.95, 0.3, 1)
+            love.graphics.setFont(font_prompt)
+            love.graphics.printf("SPACE TO START", 0, sh * 0.76, sw, "center")
+        end
+
+        love.graphics.setColor(1, 1, 1, 1)
+    end
 end
 
 function game:leave()

@@ -43,19 +43,22 @@ local kills          = {}   -- enemy entity → true  (deduplication guard)
 local bullets_dead   = {}   -- bullet entities to destroy
 local enemies_dead   = {}   -- enemy entities to destroy
 
--- Weighted drop table: {type, weight}. Total weight = 100.
+-- Weighted drop table: {type, weight}.
 local DROP_TABLE = {
-    { t = pickup_type_frag.COIN_100,     w = 30 },
-    { t = pickup_type_frag.COIN_200,     w = 20 },
-    { t = pickup_type_frag.COIN_300,     w = 15 },
+    { t = pickup_type_frag.COIN_100,     w = 40 },
+    { t = pickup_type_frag.COIN_200,     w = 30 },
+    { t = pickup_type_frag.COIN_300,     w = 20 },
     { t = pickup_type_frag.COIN_400,     w = 10 },
-    { t = pickup_type_frag.HEART,        w = 8  },
-    { t = pickup_type_frag.SHIELD,       w = 8  },
-    { t = pickup_type_frag.BOOST,        w = 4  },
-    { t = pickup_type_frag.AMMO,         w = 3  },
-    { t = pickup_type_frag.DOUBLE_SHOOT, w = 2  },
+    { t = pickup_type_frag.HEART,        w = 10  },
+    { t = pickup_type_frag.SHIELD,       w = 15  },
+    { t = pickup_type_frag.BOOST,        w = 30  },
+    { t = pickup_type_frag.AMMO,         w = 20  },
+    { t = pickup_type_frag.DOUBLE_SHOOT, w = 10  },
 }
-local DROP_TOTAL = 100
+local DROP_TOTAL = 0
+for _, entry in ipairs(DROP_TABLE) do
+    DROP_TOTAL = DROP_TOTAL + entry.w
+end
 local DROP_CHANCE = 0.35   -- 35% chance an enemy drops anything on death
 
 local function pick_drop()
