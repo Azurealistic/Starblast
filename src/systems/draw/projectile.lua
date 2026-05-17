@@ -4,11 +4,13 @@ local stages          = require "groups.stages"
 local position        = require "fragments.position"
 local projectile = require "fragments.projectile"
 local projectiles     = require "sprites.projectiles"
+local controllable = require "fragments.controllable"
 
 return ecs.builder()
     :name("system.projectile.draw")
     :group(stages.DRAW)
     :include(projectile.id, position.x, position.y)
+    :exclude(controllable)
     :execute(function(chunk, entity_list, entity_count)
         local px, py, ptype = chunk:components(position.x, position.y, projectile.id)
 

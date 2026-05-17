@@ -3,6 +3,7 @@ local ecs = require "libs.evolved"
 local stages          = require "groups.stages"
 local position        = require "fragments.position"
 local projectile = require "fragments.projectile"
+local controllable = require "fragments.controllable"
 
 -- Margin in screen pixels beyond the visible area before a projectile is
 -- destroyed.  A small buffer prevents a visible pop when a bullet clips the edge.
@@ -11,6 +12,7 @@ local MARGIN = 16
 return ecs.builder()
     :name("system.projectile.update")
     :group(stages.UPDATE)
+    :exclude(controllable)
     :include(projectile.id, position.x, position.y)
     :execute(function(chunk, entity_list, entity_count)
         local px, py, ptype = chunk:components(position.x, position.y, projectile.id)

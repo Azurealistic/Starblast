@@ -281,7 +281,7 @@ return ecs.builder()
 
         local cx  = math.random(SPRITE_PX, SCREEN_W - SPRITE_PX)
         local ey  = -SPRITE_PX
-        local spd = ENEMY_SPEED_BASE + (ENEMY_SPEED_MAX - ENEMY_SPEED_BASE) * difficulty
+        local spd = ENEMY_SPEED_BASE + ((ENEMY_SPEED_MAX - ENEMY_SPEED_BASE) * difficulty)
 
         pick_fleet(difficulty)(cx, ey, spd)
     end):spawn()
