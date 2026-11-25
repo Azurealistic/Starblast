@@ -1,5 +1,5 @@
 # Starblast
-Hello! This is an attempt at an old simple space shooter implementation! Written in Lua using the lovely Love2D library.
+Hello! This is an attempt at an old simple space shooter implementation! Written in Lua using the Love2D library.
 
 ## Libraries:
 This game uses a collection of existing code and libraries designed for Love2D to handle some complex things.
