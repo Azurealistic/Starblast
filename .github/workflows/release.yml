@@ -1,0 +1,120 @@
+
+name: Build and Release
+
+on:
+  push:
+    tags:
+      - "v*"
+
+permissions:
+  contents: write
+
+env:
+  GAME_NAME: Tetris
+  LOVE_VERSION: "11.5"
+
+jobs:
+  # Create the portable .love archive
+  build-love:
+    name: Build LÖVE archive
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Package .love file
+        uses: love-actions/love-actions-core@v1
+        with:
+          package-path: ./Tetris.love
+
+      - name: Upload .love archive
+        uses: actions/upload-artifact@v4
+        with:
+          name: love-package
+          path: ./Tetris.love
+
+  # Build Windows executables
+  build-windows:
+    name: Build Windows
+    runs-on: windows-latest
+    needs: build-love
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Download .love archive
+        uses: actions/download-artifact@v4
+        with:
+          name: love-package
+
+      - name: Build Windows packages
+        uses: love-actions/love-actions-windows@v2
+        with:
+          love-ref: "11.5"
+          love-package: ./Tetris.love
+          product-name: Tetris
+          output-folder: ./dist
+
+      - name: Upload Windows packages
+        uses: actions/upload-artifact@v4
+        with:
+          name: windows-build
+          path: ./dist/*
+
+  # Build Linux AppImage
+  build-linux:
+    name: Build Linux
+    runs-on: ubuntu-latest
+    needs: build-love
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Download .love archive
+        uses: actions/download-artifact@v4
+        with:
+          name: love-package
+
+      - name: Build Linux packages
+        uses: love-actions/love-actions-linux@v2
+        with:
+          app-name: Tetris
+          bundle-id: com.example.tetris
+          description: Tetris game
+          version-string: "1.0.0"
+          love-ref: "11.5"
+          love-package: ./Tetris.love
+          build-deb: false
+          product-name: Tetris
+          output-folder: ./dist
+
+      - name: Upload Linux packages
+        uses: actions/upload-artifact@v4
+        with:
+          name: linux-build
+          path: ./dist/*
+
+  # Publish all packages to GitHub Releases
+  release:
+    name: Publish Release
+    runs-on: ubuntu-latest
+    needs:
+      - build-love
+      - build-windows
+      - build-linux
+
+    steps:
+      - name: Download all packages
+        uses: actions/download-artifact@v4
+        with:
+          path: ./release-assets
+          merge-multiple: true
+
+      - name: Publish GitHub Release
+        uses: softprops/action-gh-release@v2
+        with:
+          files: ./release-assets/*
+          generate_release_notes: true
