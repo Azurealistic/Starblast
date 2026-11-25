@@ -10,7 +10,7 @@ permissions:
   contents: write
 
 env:
-  GAME_NAME: Tetris
+  GAME_NAME: Starblast
   LOVE_VERSION: "11.5"
 
 jobs:
@@ -26,13 +26,13 @@ jobs:
       - name: Package .love file
         uses: love-actions/love-actions-core@v1
         with:
-          package-path: ./Tetris.love
+          package-path: ./Starblast.love
 
       - name: Upload .love archive
         uses: actions/upload-artifact@v4
         with:
           name: love-package
-          path: ./Tetris.love
+          path: ./Starblast.love
 
   # Build Windows executables
   build-windows:
@@ -53,8 +53,8 @@ jobs:
         uses: love-actions/love-actions-windows@v2
         with:
           love-ref: "11.5"
-          love-package: ./Tetris.love
-          product-name: Tetris
+          love-package: ./Starblast.love
+          product-name: Starblast
           output-folder: ./dist
 
       - name: Upload Windows packages
@@ -81,14 +81,14 @@ jobs:
       - name: Build Linux packages
         uses: love-actions/love-actions-linux@v2
         with:
-          app-name: Tetris
-          bundle-id: com.example.tetris
-          description: Tetris game
+          app-name: Starblast
+          bundle-id: com.example.Starblast
+          description: Starblast game
           version-string: "1.0.0"
           love-ref: "11.5"
-          love-package: ./Tetris.love
+          love-package: ./Starblast.love
           build-deb: false
-          product-name: Tetris
+          product-name: Starblast
           output-folder: ./dist
 
       - name: Upload Linux packages
